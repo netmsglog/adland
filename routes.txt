@@ -1,0 +1,8 @@
+[location]
+url=/ad1.html
+if_allowed=a.html
+if_blocked=b.html
+blocked_ips=
+blocked_areas=
+blocked_cookies=
+allowed_uas=Chrome
