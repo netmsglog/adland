@@ -2,12 +2,25 @@
 
 ADLand 是一个根据访客动态返回页面的Webserver，由go语言编写, ADLand使用Aho–Corasick多关键字匹配算法来高速过滤访客信息，同时借助go达到较好的页面分发性能
 
-# Features
+# 功能
 - 选择以http或https方式运行，当以https运行时，自动从Let's Encrypt获取免费https证书
 - 支持按照任意数量的IP地址段过滤，可以是A,B,C类地址或完全ip地址
 - 支持按照纯真IP数据库的任意地理位置过滤
 - 支持按User-agent的任意数量的字符串过滤
 - 支持按同一Cookie的访问次数过滤
+
+# 用法
+- adland -h  显示帮助
+- adland -p 80  以指定端口运行
+- adland -s 以https方式运行，此时-d参数必须
+- adland -d xxx.com 指定域名 （用于种植cookie时使用)
+- adland -r xxx.txt 指定配置文件 （默认为 routes.txt )
+
+## 一般用法
+- adland -s -d abc.com    以https运行，使用域名abc.com (abc.com和www.abc.com会自动获得https证书，首次访问时需要从Let's Encrypt下载证书，时间较长)
+
+ADLand运行时会打印访客日志，格式为
+时间， IP， IP区域信息， Cookie的唯一标识，User-Agent， 是否被allow或者block ( blocked就会导向if_blocked定义页面，否则就是if_allowed定义页面）
 
 # 目录和文件
 
@@ -34,7 +47,7 @@ allowed_uas=Chrome,Wechat
 
 routes.txt可以由多个 [location] 开始的数行配置构成， 每一行格式为key=value，每一节[location]代表了一个动态分配页面 ，对于上面例子配置中的每行参数解释如下 ：
 
-- url=/ad1.html            必填，访客看到的url，例如 http://server/ad1.html，url可以写成任意形式，例如url=/hello/world/foolish?yes ， 实际返回的页面是由if_allowed和if_blocked定义
+- url=/ad1.html            必填，访客看到的url，url可以写成任意形式，例如url=/hello/world/foolish?yes ， 实际返回的页面是由if_allowed和if_blocked定义
 - if_allowed=a.html     必填， 当访客被允许访问时，返回 templates\a.html
 - if_blocked=b.html     必填， 当访客被禁止访问时，返回 templates\b.html
 - blocked_ips=127.0,111.104,23.24.25 可选，当blocked_ips=后面为空时不进行ip地址过滤，否则就是过滤多个IP段（以逗号,分割），只要访客IP匹配其中任意一段，访问则导向if_blocked定义的页面
@@ -44,15 +57,7 @@ routes.txt可以由多个 [location] 开始的数行配置构成， 每一行格
 
 当访客没有被以上的各种过滤器block掉时，访问就会被导向if_allowed定义的页面
 
-# ADLand 运行参数
-- adland -h  显示帮助
-- adland -p 80  以指定端口运行
-- adland -s 以https方式运行，此时-d参数必须
-- adland -d xxx.com 指定域名 （用于种植cookie时使用)
-- adland -r xxx.txt 指定配置文件 （默认为 routes.txt )
 
-ADLand运行时会打印访客日志，格式为
-时间， IP， IP区域信息， Cookie的唯一标识，User-Agent， 是否被allow或者block ( blocked就会导向if_blocked定义页面，否则就是if_allowed定义页面）
 
 
 
